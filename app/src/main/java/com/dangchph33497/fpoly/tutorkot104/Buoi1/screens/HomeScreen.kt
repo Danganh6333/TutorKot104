@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,6 +66,17 @@ fun HomeScreen(){
                     Column {
                         ItemText(content = it.description.toString())
                         ItemText(content = it.status.toString())
+                    }
+                    Column {
+                        Icon(imageVector = Icons.Outlined.Edit, contentDescription = "",Modifier.clickable {
+
+                        })
+
+                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = "",Modifier.clickable {
+                            val temps = list.toMutableList()
+                            temps.remove(it)
+                            list = temps
+                        })
                     }
                 }
                 Divider()
