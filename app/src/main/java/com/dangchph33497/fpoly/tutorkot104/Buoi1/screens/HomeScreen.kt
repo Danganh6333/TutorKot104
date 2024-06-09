@@ -25,7 +25,9 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,9 +70,10 @@ fun HomeScreen() {
     ) {
         Text(text = "Quản Lý Sản Phẩm", style = MaterialTheme.typography.titleLarge)
         Button(onClick = {
-            list = list.toMutableList().apply {
-                add(SanPham(Math.random().toString(), 9f, "Sản Phẩm 5", "mô tả 5", true))
-            }
+//            list = list.toMutableList().apply {
+//                add(SanPham(Math.random().toString(), 9f, "Sản Phẩm 5", "mô tả 5", true))
+//            }
+            showAddDialog.value = true
         }) {
             Text(text = "Thêm Sản Phẩm")
         }
@@ -190,14 +193,109 @@ fun HomeScreen() {
 
                         title = {
                             ItemText(content = "Bạn Có muốn xóa không?")
-                        })
+                        }
+                    )
+                }
+                if (showAddDialog.value) {
+                    AddProductDialog(
+                        onDismiss = { showAddDialog.value = false },
+                        onAdd = { newProduct ->
+                            list = list.toMutableList().apply {
+                                add(newProduct)
+                            }
+                            showAddDialog.value = false
+                        }
+                    )
                 }
             }
         }
     }
 }
 
+@Composable
+fun AddProductDialog(onDismiss: () -> Unit, onAdd: (SanPham) -> Unit) {
+    var id by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var status by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = MaterialTheme.shapes.medium,
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = "Thêm Sản Phẩm", style = MaterialTheme.typography.titleLarge)
+                Divider()
+                ItemTextField(label = "Tên Sản Phẩm", value = name, onValueChange = { name = it })
+                ItemTextField(label = "Giá Sản Phẩm", value = price, onValueChange = { price = it })
+                ItemTextField(label = "Mô Tả Sản Phẩm", value = description, onValueChange = { description = it })
+                ItemSwitch(label = "Trạng thái Sản Phẩm", value = status, onValueChange = { status = it })
+                if (errorMessage.isNotEmpty()) {
+                    Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(onClick = onDismiss) {
+                        Text("Hủy")
+                    }
+                    Button(onClick = {
+                        when {
+                            name.isEmpty() -> errorMessage = "Tên Sản Phẩm không được để trống"
+                            price.isEmpty() -> errorMessage = "Giá Sản Phẩm không được để trống"
+                            description.isEmpty() -> errorMessage = "Mô Tả Sản Phẩm không được để trống"
+                            else -> {
+                                val newProduct = SanPham(
+                                    id = Math.random().toString(),
+                                    price = price.toFloatOrNull() ?: 0f,
+                                    name = name,
+                                    description = description,
+                                    status = status
+                                )
+                                onAdd(newProduct)
+                            }
+                        }
+                    }) {
+                        Text("Thêm")
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun ItemTextField(label: String, value: String, onValueChange: (String) -> Unit) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(text = label) }
+    )
+}
 
+@Composable
+fun ItemSwitch(label: String, value: Boolean, onValueChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+        Switch(
+            checked = value,
+            onCheckedChange = onValueChange
+        )
+    }
+}
 @Composable
 fun ItemText(content: String) {
     Text(text = content, style = MaterialTheme.typography.bodyLarge)
