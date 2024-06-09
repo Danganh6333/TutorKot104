@@ -21,7 +21,7 @@ fun AppNavHost(navController: NavHostController){
             WelcomeScreen(navHostController = navController)
         }
         composable(ROUTE_SCREEN_NAME.HOME.name){
-
+            HomeScreen()
         }
     }
 }

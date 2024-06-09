@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -16,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.dangchph33497.fpoly.tutorkot104.R
-import kotlinx.coroutines.time.delay
+import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(navHostController: NavHostController) {
@@ -29,6 +27,8 @@ fun WelcomeScreen(navHostController: NavHostController) {
     }
     LaunchedEffect(Unit) {
         delay(2000L)
-        navHostController
+        navHostController.navigate(ROUTE_SCREEN_NAME.HOME.name){
+            popUpTo(ROUTE_SCREEN_NAME.WELCOME.name) { inclusive = true }
+        }
     }
 }
